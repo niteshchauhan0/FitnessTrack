@@ -4,12 +4,15 @@ const UserSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
+      required: [true, "Name is required"],
+      trim: true,
     },
     email: {
       type: String,
-      required: true,
+      required: [true, "Email is required"],
       unique: true,
+      lowercase: true,
+      trim: true,
     },
     img: {
       type: String,
@@ -17,10 +20,11 @@ const UserSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
+      required: [true, "Password is required"],
     },
     age: {
       type: Number,
+      default: null,
     },
   },
   { timestamps: true }

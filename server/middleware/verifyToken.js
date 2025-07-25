@@ -1,20 +1,33 @@
 import jwt from "jsonwebtoken";
 import { createError } from "../error.js";
 
-export const verifyToken = async (req, res, next) => {
+const verifyToken = (req, res, next) => {
   try {
-    if (!req.headers.authorization) {
-      return next(createError(401, "You are not authenticated!"));
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return next(createError(401, "Unauthorized: No token provided"));
     }
 
-    const token = req.headers.authorization.split(" ")[1];
+    const token = authHeader.split(" ")[1];
 
-    if (!token) return next(createError(401, "You are not authenticated"));
+    // Ensure JWT secret exists
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      return next(createError(500, "JWT_SECRET is not defined in .env"));
+    }
 
-    const decode = jwt.verify(token, process.env.JWT);
-    req.user = decode;
-    return next();
+    // Verify token
+    const decoded = jwt.verify(token, secret);
+
+    // Attach user payload to request
+    req.user = decoded;
+
+    next();
   } catch (err) {
-    next(err);
+    console.error("❌ Token verification failed:", err.message);
+    return next(createError(403, "Forbidden: Invalid or expired token"));
   }
 };
+
+export default verifyToken;

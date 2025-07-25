@@ -2,11 +2,14 @@ import { ThemeProvider, styled } from "styled-components";
 import { lightTheme } from "./utils/Themes";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Authentication from "./pages/Authentication";
-import { useState } from "react";
 import { useSelector } from "react-redux";
 import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
 import Workouts from "./pages/Workouts";
+import Tutorials from "./pages/Tutorials";
+import Blogs from "./pages/Blogs";
+import ComingSoon from "./pages/ComingSoon";
+import Contact from "./pages/Contact";
 
 const Container = styled.div`
   width: 100%;
@@ -22,6 +25,7 @@ const Container = styled.div`
 
 function App() {
   const { currentUser } = useSelector((state) => state.user);
+
   return (
     <ThemeProvider theme={lightTheme}>
       <BrowserRouter>
@@ -30,7 +34,11 @@ function App() {
             <Navbar currentUser={currentUser} />
             <Routes>
               <Route path="/" exact element={<Dashboard />} />
-              <Route path="/workouts" exact element={<Workouts />} />
+              <Route path="/workouts" element={<Workouts />} />
+              <Route path="/tutorials" element={<Tutorials />} />
+              <Route path="/blogs" element={<Blogs />} />
+              <Route path="/coming-soon" element={<ComingSoon />} />
+              <Route path="/contact" element={<Contact />} />
             </Routes>
           </Container>
         ) : (

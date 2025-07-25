@@ -1,3 +1,5 @@
+// Dashboard.jsx
+
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { counts } from "../utils/data";
@@ -16,6 +18,7 @@ const Container = styled.div`
   padding: 22px 0px;
   overflow-y: scroll;
 `;
+
 const Wrapper = styled.div`
   flex: 1;
   max-width: 1400px;
@@ -26,12 +29,14 @@ const Wrapper = styled.div`
     gap: 12px;
   }
 `;
+
 const Title = styled.div`
   padding: 0px 16px;
   font-size: 22px;
   color: ${({ theme }) => theme.text_primary};
   font-weight: 500;
 `;
+
 const FlexWrap = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -42,16 +47,17 @@ const FlexWrap = styled.div`
     gap: 12px;
   }
 `;
+
 const Section = styled.div`
   display: flex;
   flex-direction: column;
   padding: 0px 16px;
   gap: 22px;
-  padding: 0px 16px;
   @media (max-width: 600px) {
     gap: 12px;
   }
 `;
+
 const CardWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -65,59 +71,64 @@ const CardWrapper = styled.div`
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState();
+  const [data, setData] = useState(null);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [todaysWorkouts, setTodaysWorkouts] = useState([]);
-  const [workout, setWorkout] = useState(`#Legs
--Back Squat
--5 setsX15 reps
--30 kg
--10 min`);
+  const [workout, setWorkout] = useState(`#Legs\n-Back Squat\n-5 setsX15 reps\n-30 kg\n-10 min`);
 
   const dashboardData = async () => {
-    setLoading(true);
-    const token = localStorage.getItem("fittrack-app-token");
-    await getDashboardDetails(token).then((res) => {
-      setData(res.data);
-      console.log(res.data);
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("fittrack-app-token");
+      const res = await getDashboardDetails(token);
+      setData(res?.data || {});
+    } catch (error) {
+      console.error("Dashboard fetch error:", error);
+    } finally {
       setLoading(false);
-    });
+    }
   };
+
   const getTodaysWorkout = async () => {
-    setLoading(true);
-    const token = localStorage.getItem("fittrack-app-token");
-    await getWorkouts(token, "").then((res) => {
-      setTodaysWorkouts(res?.data?.todaysWorkouts);
-      console.log(res.data);
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("fittrack-app-token");
+      const res = await getWorkouts(token, "");
+      setTodaysWorkouts(res?.data?.todaysWorkouts || []);
+    } catch (error) {
+      console.error("Workouts fetch error:", error);
+    } finally {
       setLoading(false);
-    });
+    }
   };
 
   const addNewWorkout = async () => {
-    setButtonLoading(true);
-    const token = localStorage.getItem("fittrack-app-token");
-    await addWorkout(token, { workoutString: workout })
-      .then((res) => {
-        dashboardData();
-        getTodaysWorkout();
-        setButtonLoading(false);
-      })
-      .catch((err) => {
-        alert(err);
-      });
+    try {
+      setButtonLoading(true);
+      const token = localStorage.getItem("fittrack-app-token");
+      await addWorkout(token, { workoutString: workout });
+      await dashboardData();
+      await getTodaysWorkout();
+    } catch (err) {
+      alert(err.message || "Failed to add workout");
+    } finally {
+      setButtonLoading(false);
+    }
   };
 
   useEffect(() => {
     dashboardData();
     getTodaysWorkout();
   }, []);
+
   return (
     <Container>
       <Wrapper>
         <Title>Dashboard</Title>
+
         <FlexWrap>
           {counts.map((item) => (
-            <CountsCard item={item} data={data} />
+            <CountsCard key={item.title} item={item} data={data} />
           ))}
         </FlexWrap>
 
@@ -133,10 +144,10 @@ const Dashboard = () => {
         </FlexWrap>
 
         <Section>
-          <Title>Todays Workouts</Title>
+          <Title>Today's Workouts</Title>
           <CardWrapper>
             {todaysWorkouts.map((workout) => (
-              <WorkoutCard workout={workout} />
+              <WorkoutCard key={workout._id} workout={workout} />
             ))}
           </CardWrapper>
         </Section>

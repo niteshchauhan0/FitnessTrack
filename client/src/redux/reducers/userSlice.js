@@ -1,3 +1,5 @@
+// userSlice.js
+
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -14,11 +16,10 @@ export const userSlice = createSlice({
     },
     logout: (state) => {
       state.currentUser = null;
-      localStorage.removeItem("fitttrack-app-token");
+      localStorage.removeItem("fittrack-app-token");
     },
   },
 });
 
 export const { loginSuccess, logout } = userSlice.actions;
-
 export default userSlice.reducer;

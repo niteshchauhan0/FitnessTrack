@@ -6,13 +6,19 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { store, persistor } from "./redux/store";
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <PersistGate persistor={persistor}>
-        <App />
-      </PersistGate>
-    </Provider>
-  </React.StrictMode>
-);
+const container = document.getElementById("root");
+
+if (container) {
+  const root = ReactDOM.createRoot(container);
+  root.render(
+    <React.StrictMode>
+      <Provider store={store}>
+        <PersistGate loading={<div>Loading...</div>} persistor={persistor}>
+          <App />
+        </PersistGate>
+      </Provider>
+    </React.StrictMode>
+  );
+} else {
+  console.error("Root element not found");
+}

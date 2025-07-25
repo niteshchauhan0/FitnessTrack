@@ -1,3 +1,4 @@
+// SignIn.jsx
 import React, { useState } from "react";
 import styled from "styled-components";
 import TextInput from "./TextInput";
@@ -13,11 +14,13 @@ const Container = styled.div`
   flex-direction: column;
   gap: 36px;
 `;
+
 const Title = styled.div`
   font-size: 30px;
   font-weight: 800;
   color: ${({ theme }) => theme.text_primary};
 `;
+
 const Span = styled.div`
   font-size: 16px;
   font-weight: 400;
@@ -39,22 +42,21 @@ const SignIn = () => {
     return true;
   };
 
-  const handelSignIn = async () => {
+  const handleSignIn = async () => {
+    if (!validateInputs()) return;
+
     setLoading(true);
     setButtonDisabled(true);
-    if (validateInputs()) {
-      await UserSignIn({ email, password })
-        .then((res) => {
-          dispatch(loginSuccess(res.data));
-          alert("Login Success");
-          setLoading(false);
-          setButtonDisabled(false);
-        })
-        .catch((err) => {
-          alert(err.response.data.message);
-          setLoading(false);
-          setButtonDisabled(false);
-        });
+
+    try {
+      const res = await UserSignIn({ email, password });
+      dispatch(loginSuccess(res.data));
+      alert("Login Success");
+    } catch (err) {
+      alert(err.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
+      setButtonDisabled(false);
     }
   };
 
@@ -75,18 +77,18 @@ const SignIn = () => {
           label="Email Address"
           placeholder="Enter your email address"
           value={email}
-          handelChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <TextInput
           label="Password"
           placeholder="Enter your password"
           password
           value={password}
-          handelChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
         />
         <Button
-          text="SignIn"
-          onClick={handelSignIn}
+          text="Sign In"
+          onClick={handleSignIn}
           isLoading={loading}
           isDisabled={buttonDisabled}
         />

@@ -1,3 +1,4 @@
+// Authentication.jsx
 import React, { useState } from "react";
 import styled from "styled-components";
 import LogoImage from "../utils/Images/Logo.png";
@@ -14,6 +15,7 @@ const Container = styled.div`
     flex-direction: column;
   }
 `;
+
 const Left = styled.div`
   flex: 1;
   position: relative;
@@ -21,6 +23,7 @@ const Left = styled.div`
     display: none;
   }
 `;
+
 const Logo = styled.img`
   position: absolute;
   width: 70px;
@@ -28,6 +31,7 @@ const Logo = styled.img`
   left: 60px;
   z-index: 10;
 `;
+
 const Image = styled.img`
   position: relative;
   height: 100%;
@@ -55,6 +59,7 @@ const Text = styled.div`
     font-size: 14px;
   }
 `;
+
 const TextButton = styled.span`
   color: ${({ theme }) => theme.primary};
   cursor: pointer;
@@ -64,6 +69,7 @@ const TextButton = styled.span`
 
 const Authentication = () => {
   const [login, setLogin] = useState(false);
+
   return (
     <Container>
       <Left>
